@@ -2,7 +2,6 @@ package com.example.pip
 
 
 import android.app.PictureInPictureParams
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Rational
@@ -14,7 +13,6 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.pip.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +31,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupWebView() {
+        AdBlockerUtil.getInstance().initialize(this)
         binding.webView.apply {
+            this.setAdBlockerEnabled(true)
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
@@ -41,9 +41,14 @@ class MainActivity : AppCompatActivity() {
                 setSupportMultipleWindows(true)
             }
             webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                override fun onPageStarted(
+                    view: WebView?,
+                    url: String?,
+                    favicon: android.graphics.Bitmap?
+                ) {
                     super.onPageStarted(view, url, favicon)
                     // Show progress bar when the page starts loading
+
                     binding.progressBar.visibility = View.VISIBLE
                 }
 
@@ -57,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             loadUrl("https://www.youtube.com/")
         }
     }
+
     // Set up PIP and Service buttons
     private fun setupButtons() {
         binding.btnPIP.setOnClickListener {
@@ -93,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         newConfig: android.content.res.Configuration
     ) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        binding.btnPIP.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
+//        binding.btnPIP.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
     }
 
 
